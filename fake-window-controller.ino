@@ -1,13 +1,18 @@
-// CONFIGURATION
+#include "wifiUtilities.h"
+
 #define WINDOW_BRIGHTNESS_PIN 3
 #define MIN_BRIGHTNESS 0 // 0 - 100
-#define MAX_BRIGHTNESS 100 // 0 - 100
+#define MAX_BRIGHTNESS 75 // 0 - 100
 #define BRIGHTNESS_INCREMENT_SIZE 2
 #define FADE_STEP_INTERVAL 50
-#define ZERO_OFFSET 15 // No light comes out below this so don't use it
+#define ZERO_OFFSET 16 // No light comes out below this so stay above this
 #define DEBUG 0 // 0 or 1
 
-// DECLARATIONS
+#include "secrets.h"
+char wifiSSID[] = WIFI_SSID;
+char wifiPass[] = WIFI_PASS;
+int status = WL_IDLE_STATUS;
+
 float desiredLightLevel;
 float adjustedMinBrightness;
 float currentLightLevel;
@@ -16,7 +21,19 @@ float cubeRootOf255 = 6.34;
 unsigned long timeForNextFadeStep;
 
 void setup() {
-  if (DEBUG == 1) Serial.begin(9600);
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
+  checkWifiStatus();
+
+  checkFirmwareVersion();
+
+  connectToWifi(wifiSSID, wifiPass);
+
+  if (DEBUG != 1) Serial.end();
+
   adjustedMinBrightness = MIN_BRIGHTNESS + ZERO_OFFSET;
   desiredLightLevel = MAX_BRIGHTNESS;
   currentLightLevel = adjustedMinBrightness;
