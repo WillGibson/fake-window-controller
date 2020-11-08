@@ -40,25 +40,24 @@ void setup() {
 }
 
 void loop() {
-  if (millis() > timeForNextFadeStep) {
-    timeForNextFadeStep = millis() + (unsigned long)FADE_STEP_INTERVAL;
 
-    if (currentLightLevel < desiredLightLevel) currentLightLevel += BRIGHTNESS_INCREMENT_SIZE;
-    else if (currentLightLevel > desiredLightLevel) currentLightLevel -= BRIGHTNESS_INCREMENT_SIZE;
+  if (currentLightLevel < desiredLightLevel) currentLightLevel += BRIGHTNESS_INCREMENT_SIZE;
+  else if (currentLightLevel > desiredLightLevel) currentLightLevel -= BRIGHTNESS_INCREMENT_SIZE;
 
-    currentLightLevelForPin = min(
-                                255,
-                                pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
-                              );
-    log(
-      (String)"currentLightLevel // currentLightLevelForPin: " +
-      currentLightLevel + " // " + currentLightLevelForPin
-    );
+  currentLightLevelForPin = min(
+                              255,
+                              pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
+                            );
+  log(
+    (String)"currentLightLevel // currentLightLevelForPin: " +
+    currentLightLevel + " // " + currentLightLevelForPin
+  );
 
-    if (currentLightLevel >= MAX_BRIGHTNESS) desiredLightLevel = adjustedMinBrightness;
-    if (currentLightLevel <= adjustedMinBrightness) desiredLightLevel = MAX_BRIGHTNESS;
-    analogWrite(WINDOW_BRIGHTNESS_PIN, currentLightLevelForPin);
-  }
+  if (currentLightLevel >= MAX_BRIGHTNESS) desiredLightLevel = adjustedMinBrightness;
+  if (currentLightLevel <= adjustedMinBrightness) desiredLightLevel = MAX_BRIGHTNESS;
+  analogWrite(WINDOW_BRIGHTNESS_PIN, currentLightLevelForPin);
+
+  delay(FADE_STEP_INTERVAL);
 }
 
 void log(String message) {
