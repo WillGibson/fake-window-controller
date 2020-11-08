@@ -6,22 +6,24 @@ WiFiSSLClient client;
 
 void getWeather(String apiKey, String location) {
 
-    char host[] = "api.openweathermap.org";
-    String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=" + apiKey;
+  char host[] = "api.openweathermap.org";
+  String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=" + apiKey;
 
-//  char host[] = "example.com";
-//  String path = "/";
+  //  char host[] = "example.com";
+  //  String path = "/";
 
   int pingResult;
   pingResult = WiFi.ping(host);
 
-  if (pingResult >= 0) {
-    Serial.print("SUCCESS! RTT = ");
+  if (WiFi.ping(host) >= 0) {
+    Serial.print("Successfully pinged ");
+    Serial.print(host);
+    Serial.print(" in ");
     Serial.print(pingResult);
-    Serial.println(" ms");
+    Serial.println("ms");
   } else {
-    Serial.print("FAILED! Error code: ");
-    Serial.println(pingResult);
+    Serial.print("Could not ping ");
+    Serial.println(host);
   }
 
 
@@ -37,7 +39,17 @@ void getWeather(String apiKey, String location) {
     client.println("Connection: close");
     client.println();
 
-    delay(1000);
+    Serial.print("Waiting for response");
+    int timeout = 0;
+    while (!client.available() && timeout < 100) {
+      Serial.print(".");
+      delay(50);
+    }
+    Serial.println();
+    if (!client.available()) {
+      Serial.println("No response recieved");
+      Serial.println("Effectively exiting"); while (true);
+    }
 
     while (client.available()) {
       char c = client.read();
