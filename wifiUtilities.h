@@ -77,7 +77,7 @@ void connectToWifi(char ssid[], char pass[]) {
   while (status != WL_CONNECTED && timeout < 100) {
     Serial.print(".");
     status = WiFi.begin(ssid, pass);
-    delay(50);
+    delay(100);
   }
   Serial.println();
   Serial.println();
