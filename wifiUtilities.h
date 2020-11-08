@@ -42,7 +42,7 @@ void printWiFiData() {
   // print your MAC address:
   byte mac[6];
   WiFi.macAddress(mac);
-  Serial.print("MAC address: ");
+  Serial.println("MAC address: ");
   printMacAddress(mac);
 }
 
@@ -54,7 +54,7 @@ void printCurrentNet() {
   // print the MAC address of the router you're attached to:
   byte bssid[6];
   WiFi.BSSID(bssid);
-  Serial.print("BSSID: ");
+  Serial.println("BSSID: ");
   printMacAddress(bssid);
   // print the received signal strength:
   long rssi = WiFi.RSSI();

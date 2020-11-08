@@ -35,6 +35,7 @@ void setup() {
   checkFirmwareVersion();
 
   connectToWifi(wifiSSID, wifiPass);
+  Serial.println();
 
   if (DEBUG != 1) Serial.end();
 

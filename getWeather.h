@@ -6,8 +6,11 @@ WiFiSSLClient client;
 
 void getWeather(char* apiKey, String location) {
 
-  String host = "api.openweathermap.org";
-  String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=f955aab26dbecc5aad4287b8dc7e8d35";
+//  String host = "api.openweathermap.org";
+//  String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=f955aab26dbecc5aad4287b8dc7e8d35";
+
+  String host = "example.com";
+  String path = "/";
 
 
   client.println();
