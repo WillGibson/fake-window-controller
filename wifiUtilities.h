@@ -25,7 +25,6 @@ void printMacAddress(byte mac[]) {
       Serial.print(":");
     }
   }
-  Serial.println();
 }
 
 void printWiFiData() {
@@ -72,12 +71,12 @@ void printCurrentNet() {
 void connectToWifi(char ssid[], char pass[]) {
   int status = WL_IDLE_STATUS;
   while ( status != WL_CONNECTED) {
+  Serial.println();
     Serial.print("Attempting to connect to WPA SSID: ");
     Serial.println(ssid);
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(ssid, pass);
 
-    // wait 5 seconds for connection:
     delay(5000);
   }
 
