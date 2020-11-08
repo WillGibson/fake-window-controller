@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "wifiUtilities.h"
 
 #define WINDOW_BRIGHTNESS_PIN 3
@@ -8,7 +9,7 @@
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
 #define DEBUG 0 // 0 or 1
 
-#include "secrets.h"
+#include "../secrets.h"
 char wifiSSID[] = WIFI_SSID;
 char wifiPass[] = WIFI_PASS;
 int status = WL_IDLE_STATUS;
@@ -50,10 +51,10 @@ void loop() {
                                 255,
                                 pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
                               );
-    log(
-      (String)"currentLightLevel // currentLightLevelForPin: " +
-      currentLightLevel + " // " + currentLightLevelForPin
-    );
+    // log(
+    //   (String)"currentLightLevel // currentLightLevelForPin: " +
+    //   currentLightLevel + " // " + currentLightLevelForPin
+    // );
 
     if (currentLightLevel >= MAX_BRIGHTNESS) desiredLightLevel = adjustedMinBrightness;
     if (currentLightLevel <= adjustedMinBrightness) desiredLightLevel = MAX_BRIGHTNESS;
