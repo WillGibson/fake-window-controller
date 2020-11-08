@@ -4,31 +4,46 @@
 
 WiFiSSLClient client;
 
-void getWeather(char* apiKey, String location) {
+void getWeather(String apiKey, String location) {
 
-//  String host = "api.openweathermap.org";
-//  String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=f955aab26dbecc5aad4287b8dc7e8d35";
+    char host[] = "api.openweathermap.org";
+    String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=" + apiKey;
 
-  String host = "example.com";
-  String path = "/";
+//  char host[] = "example.com";
+//  String path = "/";
+
+  int pingResult;
+  pingResult = WiFi.ping(host);
+
+  if (pingResult >= 0) {
+    Serial.print("SUCCESS! RTT = ");
+    Serial.print(pingResult);
+    Serial.println(" ms");
+  } else {
+    Serial.print("FAILED! Error code: ");
+    Serial.println(pingResult);
+  }
 
 
-  client.println();
-  Serial.println("Starting connection to " + host + "...");
+  Serial.println();
+  Serial.print("Starting connection to ");
+  Serial.println(host);
   // if you get a connection, report back via serial:
-  if (client.connect("api.openweathermap.org", 80)) {
-    Serial.println("connected to " + host);
+  if (client.connect(host, 443)) {
+    Serial.println("connected to host");
     // Make a HTTP request:
     client.println("GET " + path + " HTTP/1.1");
-    client.println("Host: " + host);
+    client.println("Host: api.openweathermap.org");
     client.println("Connection: close");
     client.println();
+
+    delay(1000);
 
     while (client.available()) {
       char c = client.read();
       Serial.write(c);
     }
   } else {
-    Serial.println("Could not connect to " + host);
+    Serial.println("Could not connect to host");
   }
 }

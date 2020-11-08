@@ -13,7 +13,7 @@
 #include "secrets.h"
 char wifiSSID[] = WIFI_SSID;
 char wifiPass[] = WIFI_PASS;
-char apiKey[] = OPEN_WEATHER_API_KEY;
+String apiKey = OPEN_WEATHER_API_KEY;
 int status = WL_IDLE_STATUS;
 
 float desiredLightLevel;
@@ -28,7 +28,7 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-  Serial.print("\n\n\n##########\n# REBOOT\n\n");
+  Serial.print("\n\n\n##########\n# REBOOT\n");
 
   checkWifiStatus();
 
