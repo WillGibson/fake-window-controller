@@ -83,11 +83,11 @@ void getWeather(String apiKey, String location) {
   client.stop();
   Serial.println(response);
 
-  //  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 5000;
-  //  StaticJsonDocument<capacity> jsonDocument;
-  //  DeserializationError error = deserializeJson(jsonDocument, jsonArray);
-
-  //  if (error) {
-  //    Serial.print("deserializeJson() failed with code ");
-  //  }
+//  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 5000;
+//  StaticJsonDocument<5000> jsonDocument;
+//  DeserializationError error = deserializeJson(jsonDocument, response);
+//  if (error) {
+//    Serial.print("deserializeJson() failed with code ");
+//  }
+//  serializeJsonPretty(jsonDocument, Serial);
 }
