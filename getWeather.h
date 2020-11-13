@@ -89,7 +89,7 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
     return;
   }
 
-  Serial.print("Streamlining the JSON");
+  Serial.println("Streamlining the JSON");
   StaticJsonDocument<200> tidyJSON;
   String city = jsonDocument["name"];
   String country = jsonDocument["sys"]["country"];
