@@ -4,7 +4,7 @@
 
 WiFiSSLClient client;
 
-void getWeather(String apiKey, String location) {
+StaticJsonDocument<200> getWeather(String apiKey, String location) {
 
   char host[] = "api.openweathermap.org";
   String path = "/data/2.5/weather?q=" + location + "&cnt=1&appid=" + apiKey;
@@ -88,18 +88,15 @@ void getWeather(String apiKey, String location) {
     Serial.println(error.f_str());
     return;
   }
-  // serializeJsonPretty(jsonDocument, Serial);
 
+  Serial.print("Streamlining the JSON");
   StaticJsonDocument<200> tidyJSON;
   String city = jsonDocument["name"];
   String country = jsonDocument["sys"]["country"];
-  int sunrise = jsonDocument["city"]["sunrise"];
-  int sunset = jsonDocument["city"]["sunset"];
   tidyJSON["location"] = city + ", " + country;
   tidyJSON["sunrise"] = jsonDocument["sys"]["sunrise"];
   tidyJSON["sunset"] = jsonDocument["sys"]["sunset"];
   tidyJSON["cloudiness"] = jsonDocument["clouds"]["all"];
-  // serializeJsonPretty(tidyJSON, Serial);
 
   return tidyJSON;
 }

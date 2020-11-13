@@ -41,7 +41,8 @@ void setup() {
   desiredLightLevel = MAX_BRIGHTNESS;
   currentLightLevel = adjustedMinBrightness;
 
-  getWeather(apiKey, WEATHER_LOCATION);
+  StaticJsonDocument<200> weather = getWeather(apiKey, WEATHER_LOCATION);
+  serializeJsonPretty(weather, Serial);
 }
 
 void loop() {
