@@ -48,16 +48,14 @@ void printWiFiData() {
 }
 
 void printCurrentNet() {
-  // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  // print the MAC address of the router you're attached to:
   byte bssid[6];
   WiFi.BSSID(bssid);
   Serial.print("BSSID: ");
   printMacAddress(bssid);
-  // print the received signal strength:
+
   long rssi = WiFi.RSSI();
   Serial.print("signal strength (RSSI): ");
   Serial.println(rssi);
@@ -66,21 +64,29 @@ void printCurrentNet() {
   byte encryption = WiFi.encryptionType();
   Serial.print("Encryption Type: ");
   Serial.println(encryption, HEX);
+
   Serial.println();
 }
 
 void connectToWifi(char ssid[], char pass[]) {
   int status = WL_IDLE_STATUS;
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network:
+  Serial.println();
+  Serial.print("Attempting to connect to WPA SSID: ");
+  Serial.print(ssid);
+  int timeout = 0;
+  while (status != WL_CONNECTED && timeout < 100) {
+    Serial.print(".");
     status = WiFi.begin(ssid, pass);
-
-    // wait 5 seconds for connection:
-    delay(5000);
+    delay(100);
   }
-
+  Serial.println();
+  Serial.println();
+  
+  if (status != WL_CONNECTED) {
+    Serial.println("Could not connect to the WiFi network");
+    Serial.println("Effectively exiting"); while (true);
+  }
+  
   Serial.println("You're connected to the network");
   printCurrentNet();
   printWiFiData();
