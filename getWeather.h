@@ -97,6 +97,7 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
   tidyJSON["sunrise"] = jsonDocument["sys"]["sunrise"];
   tidyJSON["sunset"] = jsonDocument["sys"]["sunset"];
   tidyJSON["cloudiness"] = jsonDocument["clouds"]["all"];
+  tidyJSON["now"] = jsonDocument["dt"];
 
   return tidyJSON;
 }
