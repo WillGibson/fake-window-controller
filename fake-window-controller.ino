@@ -25,9 +25,7 @@ unsigned long timeForNextFadeStep;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  while (!Serial) continue;
   Serial.print("\n\n##########\n# REBOOT\n");
 
   checkWifiStatus();
