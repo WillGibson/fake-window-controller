@@ -6,6 +6,7 @@
 #define MIN_BRIGHTNESS 0 // 0 - 100
 #define MAX_BRIGHTNESS 75 // 0 - 100
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
+#define SUNLIGHT_TRANSITION_TIME 3600
 #define INTERVAL 10000 // milliseconds
 #define DEBUG 1 // 0 or 1
 
@@ -54,10 +55,21 @@ void loop() {
 
   int daytimeLightLevel = MAX_BRIGHTNESS - (cloudiness / 2);
   int nighttimeLightLevel = adjustedMinBrightness;
+  int lightLevelDifference = daytimeLightLevel - nighttimeLightLevel;
   
-  if (sunrise < now && now < sunset) {
+  if ((sunrise + SUNLIGHT_TRANSITION_TIME) < now && now < (sunset - SUNLIGHT_TRANSITION_TIME)) {
+    // Daytime
     currentLightLevel = daytimeLightLevel;
+  } else if (sunrise < now && now < (sunrise + SUNLIGHT_TRANSITION_TIME)) {
+    // Sunrise
+    int howFarFromDarkToLight = ((now - sunrise) / SUNLIGHT_TRANSITION_TIME);
+    currentLightLevel = nighttimeLightLevel + (lightLevelDifference * howFarFromDarkToLight);
+  } else if ((sunset - SUNLIGHT_TRANSITION_TIME) < now && now < sunset) {
+    // Sunset
+    int howFarFromDarkToLight = ((sunset - now) / SUNLIGHT_TRANSITION_TIME);
+    currentLightLevel = nighttimeLightLevel + (lightLevelDifference * howFarFromDarkToLight);
   } else {
+    // Nighttime
     currentLightLevel = nighttimeLightLevel;
   }
 
