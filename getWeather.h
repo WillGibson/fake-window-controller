@@ -75,13 +75,13 @@ void getWeather(String apiKey, String location) {
     return;
   }
 
-  String result;
+  String response;
   while (client.connected() || client.available()) {
     char character = client.read();
-    result = result + String(character);
+    response = response + String(character);
   }
   client.stop();
-  Serial.println(result);
+  Serial.println(response);
 
   //  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 5000;
   //  StaticJsonDocument<capacity> jsonDocument;
