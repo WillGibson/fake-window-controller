@@ -22,6 +22,7 @@ float currentLightLevel;
 float currentLightLevelForPin;
 float cubeRootOf255 = 6.34;
 unsigned long timeForNextFadeStep;
+StaticJsonDocument<200> weather;
 
 void setup() {
   Serial.begin(9600);
@@ -40,14 +41,14 @@ void setup() {
   adjustedMinBrightness = MIN_BRIGHTNESS + ZERO_OFFSET;
   desiredLightLevel = MAX_BRIGHTNESS;
   currentLightLevel = adjustedMinBrightness;
-
-  StaticJsonDocument<200> weather = getWeather(apiKey, WEATHER_LOCATION);
-  serializeJsonPretty(weather, Serial);
 }
 
 void loop() {
-
-//  getWeather(apiKey, WEATHER_LOCATION);
+  
+  weather = getWeather(apiKey, WEATHER_LOCATION);
+  Serial.println();
+  serializeJsonPretty(weather, Serial);
+  Serial.println(); Serial.println();
 
   if (currentLightLevel < desiredLightLevel) currentLightLevel += BRIGHTNESS_INCREMENT_SIZE;
   else if (currentLightLevel > desiredLightLevel) currentLightLevel -= BRIGHTNESS_INCREMENT_SIZE;
