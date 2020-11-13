@@ -5,9 +5,8 @@
 #define WINDOW_BRIGHTNESS_PIN 3
 #define MIN_BRIGHTNESS 0 // 0 - 100
 #define MAX_BRIGHTNESS 75 // 0 - 100
-#define BRIGHTNESS_INCREMENT_SIZE 2
-#define INTERVAL 10000 // milliseconds
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
+#define INTERVAL 10000 // milliseconds
 #define DEBUG 1 // 0 or 1
 
 #include "secrets.h"
@@ -39,8 +38,6 @@ void setup() {
   if (DEBUG != 1) Serial.end();
 
   adjustedMinBrightness = MIN_BRIGHTNESS + ZERO_OFFSET;
-  //  desiredLightLevel = MAX_BRIGHTNESS;
-  //  currentLightLevel = adjustedMinBrightness;
 }
 
 void loop() {
@@ -68,7 +65,7 @@ void loop() {
                               255,
                               pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
                             );
-  log(
+  Serial.println(
     (String)"currentLightLevel // currentLightLevelForPin: " +
     currentLightLevel + " // " + currentLightLevelForPin
   );
