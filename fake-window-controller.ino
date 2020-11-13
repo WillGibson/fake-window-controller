@@ -1,7 +1,7 @@
 #include "getWeather.h"
 #include "wifiUtilities.h"
 
-#define WEATHER_LOCATION "torino,IT"
+#define WEATHER_LOCATION "bristol,UK"
 #define WINDOW_BRIGHTNESS_PIN 3
 #define MIN_BRIGHTNESS 0 // 0 - 100
 #define MAX_BRIGHTNESS 75 // 0 - 100

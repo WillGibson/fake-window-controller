@@ -7,10 +7,7 @@ WiFiSSLClient client;
 void getWeather(String apiKey, String location) {
 
   char host[] = "api.openweathermap.org";
-  String path = "/data/2.5/forecast?q=torino,IT&cnt=3&appid=" + apiKey;
-
-  //  char host[] = "example.com";
-  //  String path = "/";
+  String path = "/data/2.5/weather?q=" + location + "&cnt=1&appid=" + apiKey;
 
   int pingResult;
   pingResult = WiFi.ping(host);
@@ -75,19 +72,34 @@ void getWeather(String apiKey, String location) {
     return;
   }
 
-  String response;
+  char response[2000];
+  int pointer = 0;
   while (client.connected() || client.available()) {
     char character = client.read();
-    response = response + String(character);
+    response[pointer] = character;
+    pointer++;
   }
   client.stop();
-  Serial.println(response);
 
-//  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 5000;
-//  StaticJsonDocument<5000> jsonDocument;
-//  DeserializationError error = deserializeJson(jsonDocument, response);
-//  if (error) {
-//    Serial.print("deserializeJson() failed with code ");
-//  }
-//  serializeJsonPretty(jsonDocument, Serial);
+  StaticJsonDocument<2000> jsonDocument;
+  DeserializationError error = deserializeJson(jsonDocument, response);
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+  // serializeJsonPretty(jsonDocument, Serial);
+
+  StaticJsonDocument<200> tidyJSON;
+  String city = jsonDocument["name"];
+  String country = jsonDocument["sys"]["country"];
+  int sunrise = jsonDocument["city"]["sunrise"];
+  int sunset = jsonDocument["city"]["sunset"];
+  tidyJSON["location"] = city + ", " + country;
+  tidyJSON["sunrise"] = jsonDocument["sys"]["sunrise"];
+  tidyJSON["sunset"] = jsonDocument["sys"]["sunset"];
+  tidyJSON["cloudiness"] = jsonDocument["clouds"]["all"];
+  // serializeJsonPretty(tidyJSON, Serial);
+
+  return tidyJSON;
 }
