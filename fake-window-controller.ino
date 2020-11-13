@@ -6,7 +6,7 @@
 #define MIN_BRIGHTNESS 0 // 0 - 100
 #define MAX_BRIGHTNESS 75 // 0 - 100
 #define BRIGHTNESS_INCREMENT_SIZE 2
-#define FADE_STEP_INTERVAL 50
+#define INTERVAL 10000 // milliseconds
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
 #define DEBUG 1 // 0 or 1
 
@@ -39,34 +39,43 @@ void setup() {
   if (DEBUG != 1) Serial.end();
 
   adjustedMinBrightness = MIN_BRIGHTNESS + ZERO_OFFSET;
-  desiredLightLevel = MAX_BRIGHTNESS;
-  currentLightLevel = adjustedMinBrightness;
+  //  desiredLightLevel = MAX_BRIGHTNESS;
+  //  currentLightLevel = adjustedMinBrightness;
 }
 
 void loop() {
-  
+
   weather = getWeather(apiKey, WEATHER_LOCATION);
   Serial.println();
   serializeJsonPretty(weather, Serial);
   Serial.println(); Serial.println();
 
-  if (currentLightLevel < desiredLightLevel) currentLightLevel += BRIGHTNESS_INCREMENT_SIZE;
-  else if (currentLightLevel > desiredLightLevel) currentLightLevel -= BRIGHTNESS_INCREMENT_SIZE;
+  long sunrise = int(weather["sunrise"]);
+  long sunset = int(weather["sunset"]);
+  long cloudiness = int(weather["cloudiness"]);
+  long now = int(weather["now"]);
+
+  int daytimeLightLevel = MAX_BRIGHTNESS - (cloudiness / 2);
+  int nighttimeLightLevel = adjustedMinBrightness;
+  
+  if (sunrise < now && now < sunset) {
+    currentLightLevel = daytimeLightLevel;
+  } else {
+    currentLightLevel = nighttimeLightLevel;
+  }
 
   currentLightLevelForPin = min(
                               255,
                               pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
                             );
-//  log(
-//    (String)"currentLightLevel // currentLightLevelForPin: " +
-//    currentLightLevel + " // " + currentLightLevelForPin
-//  );
+  log(
+    (String)"currentLightLevel // currentLightLevelForPin: " +
+    currentLightLevel + " // " + currentLightLevelForPin
+  );
 
-  if (currentLightLevel >= MAX_BRIGHTNESS) desiredLightLevel = adjustedMinBrightness;
-  if (currentLightLevel <= adjustedMinBrightness) desiredLightLevel = MAX_BRIGHTNESS;
   analogWrite(WINDOW_BRIGHTNESS_PIN, currentLightLevelForPin);
 
-  delay(FADE_STEP_INTERVAL);
+  delay(INTERVAL);
 }
 
 void log(String message) {
