@@ -44,6 +44,12 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
     return;
   }
 
+  String line = "";
+  while (client.connected()) {
+    line = client.readStringUntil('\n');
+    Serial.println(line);
+  }
+
   // Check HTTP status
   char status[32] = {0};
   client.readBytesUntil('\r', status, sizeof(status));
