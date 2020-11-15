@@ -44,28 +44,6 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
     return;
   }
 
-  String line = "";
-  while (client.connected()) {
-    line = client.readStringUntil('\n');
-    Serial.println(line);
-  }
-
-  // Check HTTP status
-  char status[32] = {0};
-  client.readBytesUntil('\r', status, sizeof(status));
-  if (strcmp(status, "HTTP/1.1 200 OK") != 0) {
-    Serial.print(F("Unexpected response: "));
-    Serial.println(status);
-    return;
-  }
-
-  // Skip HTTP headers
-  char endOfHeaders[] = "\r\n\r\n";
-  if (!client.find(endOfHeaders)) {
-    Serial.println(F("Invalid response"));
-    return;
-  }
-
   Serial.print("Waiting for response");
   int timeout = 0;
   while (!client.available() && timeout < 1000) {
@@ -75,6 +53,36 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
   Serial.println();
   if (!client.available()) {
     Serial.println("No response received");
+    return;
+  }
+
+  // Check HTTP status
+  char status[32] = {0};
+  client.readBytesUntil('\r', status, sizeof(status));
+  Serial.print("status: ");
+  Serial.println(status);
+  if (strcmp(status, "HTTP/1.1 200 OK") != 0) {
+    Serial.print(F("Unexpected response: "));
+    Serial.println(status);
+    return;
+  }
+
+  // Get time from response headers (because the board has no clock)
+  String dateHeader;
+  while (client.connected()) {
+    String dateHeaderKey = "Date: ";
+    String line = client.readStringUntil('\n');
+    if (line.indexOf(dateHeaderKey) != -1) {
+      dateHeader = line.substring(sizeof(dateHeaderKey));
+      Serial.println("dateHeader: " + dateHeader);
+      break;
+    }
+  }
+
+  // Skip rest of HTTP headers
+  char endOfHeaders[] = "\r\n\r\n";
+  if (!client.find(endOfHeaders)) {
+    Serial.println(F("Invalid response"));
     return;
   }
 
