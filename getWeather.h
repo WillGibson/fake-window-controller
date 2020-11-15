@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <ArduinoJson.h>
+#include <time.h>
 
 WiFiSSLClient client;
 
@@ -86,6 +87,7 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
     return;
   }
 
+  // Get the response body
   char response[2000];
   int pointer = 0;
   while (client.connected() || client.available()) {
