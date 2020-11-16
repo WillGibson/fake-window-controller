@@ -6,8 +6,9 @@
 #define MIN_BRIGHTNESS 0 // 0 - 100
 #define MAX_BRIGHTNESS 75 // 0 - 100
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
-#define INTERVAL 10000 // milliseconds
-#define DEBUG 1 // 0 or 1
+#define SUNLIGHT_TRANSITION_TIME 2400 // seconds
+#define INTERVAL 60000 // milliseconds
+#define DEBUG 0 // 0 or 1
 
 #include "secrets.h"
 char wifiSSID[] = WIFI_SSID;
@@ -43,35 +44,60 @@ void setup() {
 void loop() {
 
   weather = getWeather(apiKey, WEATHER_LOCATION);
-  Serial.println();
-  serializeJsonPretty(weather, Serial);
-  Serial.println(); Serial.println();
 
-  long sunrise = int(weather["sunrise"]);
-  long sunset = int(weather["sunset"]);
-  long cloudiness = int(weather["cloudiness"]);
-  long now = int(weather["now"]);
+  long now = long(weather["now"]);
+  long sunrise = long(weather["sunrise"]);
+  long sunset = long(weather["sunset"]);
+  long sunriseStartTime = sunrise - (SUNLIGHT_TRANSITION_TIME / 2);
+  long sunriseEndTime = sunrise + (SUNLIGHT_TRANSITION_TIME / 2);
+  long sunsetStartTime = sunset - (SUNLIGHT_TRANSITION_TIME / 2);
+  long sunsetEndTime = sunset + (SUNLIGHT_TRANSITION_TIME / 2);
+  long cloudiness = long(weather["cloudiness"]);
 
-  int daytimeLightLevel = MAX_BRIGHTNESS - (cloudiness / 2);
+  int daytimeLightLevel = MAX_BRIGHTNESS - (cloudiness / 3);
   int nighttimeLightLevel = adjustedMinBrightness;
-  
-  if (sunrise < now && now < sunset) {
+  int lightLevelDifference = daytimeLightLevel - nighttimeLightLevel;
+  Serial.println((String)"now: " + now);
+  Serial.println((String)"sunrise: " + sunrise);
+  Serial.println((String)"sunset: " + sunset);
+  Serial.println((String)"sunriseStartTime: " + sunriseStartTime);
+  Serial.println((String)"sunriseEndTime: " + sunriseEndTime);
+  Serial.println((String)"sunsetStartTime: " + sunsetStartTime);
+  Serial.println((String)"sunsetEndTime: " + sunsetEndTime);
+  Serial.println((String)"cloudiness: " + cloudiness);
+
+  Serial.println((String)"daytimeLightLevel: " + daytimeLightLevel);
+  Serial.println((String)"nighttimeLightLevel: " + nighttimeLightLevel);
+  Serial.println((String)"lightLevelDifference: " + lightLevelDifference);
+  Serial.println();
+
+  if (sunriseEndTime <= now && now <= sunsetStartTime) {
+    Serial.println("Daytime");
     currentLightLevel = daytimeLightLevel;
+  } else if (sunriseStartTime < now && now < sunriseEndTime) {
+    Serial.println("Sunrise");
+    float howFarFromDarkToLight = (float(now - sunriseStartTime) / float(SUNLIGHT_TRANSITION_TIME));
+    currentLightLevel = nighttimeLightLevel + (lightLevelDifference * howFarFromDarkToLight);
+  } else if (sunsetStartTime < now && now < sunsetEndTime) {
+    Serial.println("Sunset");
+    float howFarFromLightToDark = (float(now - sunsetStartTime) / float(SUNLIGHT_TRANSITION_TIME));
+    currentLightLevel = daytimeLightLevel - (lightLevelDifference * howFarFromLightToDark);
   } else {
+    Serial.println("Nighttime");
     currentLightLevel = nighttimeLightLevel;
   }
-
+  Serial.println();
+  
   currentLightLevelForPin = min(
                               255,
                               pow((float)(currentLightLevel / 100) * cubeRootOf255, 3)
                             );
-  Serial.println(
-    (String)"currentLightLevel // currentLightLevelForPin: " +
-    currentLightLevel + " // " + currentLightLevelForPin
-  );
+  Serial.println((String)"currentLightLevel: " + currentLightLevel);
+  Serial.println((String)"currentLightLevelForPin: " + currentLightLevelForPin);
 
   analogWrite(WINDOW_BRIGHTNESS_PIN, currentLightLevelForPin);
 
+  // Todo: This could be longer when we're well outside sunrise/sunset times
   delay(INTERVAL);
 }
 
