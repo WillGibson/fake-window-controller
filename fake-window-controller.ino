@@ -7,8 +7,7 @@
 #define MAX_BRIGHTNESS 75 // 0 - 100
 #define ZERO_OFFSET 16 // No light comes out below this so stay above this
 #define SUNLIGHT_TRANSITION_TIME 3600
-//#define INTERVAL 60000 // milliseconds
-#define INTERVAL 1 // milliseconds
+#define INTERVAL 5 * 60 * 1000 // milliseconds
 #define DEBUG 1 // 0 or 1
 
 #include "secrets.h"

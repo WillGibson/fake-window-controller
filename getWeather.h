@@ -153,14 +153,15 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
     epochTime += 30 * aDayInSeconds;
   }
   epochTime += (dayOfMonth - 1) * aDayInSeconds;
+  Serial.println(epochTime);
   // Leap years
   int numberOfLeapYears = ((yearsSinceEpoch - 2) / 4) + 1;
   // Todo/: Need to know if the current year is a leap year I think...
   epochTime += numberOfLeapYears  * aDayInSeconds;
   // Hours
-  epochTime += dateHeader.substring(19, 17).toInt();
+  epochTime += dateHeader.substring(19, 17).toInt() * anHourInSeconds;
   // Minutes
-  epochTime += dateHeader.substring(22, 20).toInt();
+  epochTime += dateHeader.substring(22, 20).toInt() * aMinuteInSeconds;
   // Seconds
   epochTime += dateHeader.substring(25, 23).toInt();
   Serial.print("Epoch time: ");
