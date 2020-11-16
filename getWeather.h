@@ -59,8 +59,6 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
   // Check HTTP status
   char status[32] = {0};
   client.readBytesUntil('\r', status, sizeof(status));
-  Serial.print("status: ");
-  Serial.println(status);
   if (strcmp(status, "HTTP/1.1 200 OK") != 0) {
     Serial.print(F("Unexpected response: "));
     Serial.println(status);
@@ -156,7 +154,6 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
   Serial.println(epochTime);
   // Leap years
   int numberOfLeapYears = ((yearsSinceEpoch - 2) / 4) + 1;
-  // Todo/: Need to know if the current year is a leap year I think...
   epochTime += numberOfLeapYears  * aDayInSeconds;
   // Hours
   epochTime += dateHeader.substring(19, 17).toInt() * anHourInSeconds;
