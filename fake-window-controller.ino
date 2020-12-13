@@ -4,11 +4,11 @@
 #define WEATHER_LOCATION "bristol,UK"
 #define WINDOW_BRIGHTNESS_PIN 3
 #define MIN_BRIGHTNESS 0 // 0 - 100
-#define MAX_BRIGHTNESS 75 // 0 - 100
-#define ZERO_OFFSET 16 // No light comes out below this so stay above this
+#define MAX_BRIGHTNESS 100 // 0 - 100
+#define ZERO_OFFSET 37 // No light comes out below this so stay above this
 #define SUNLIGHT_TRANSITION_TIME 2400 // seconds
 #define INTERVAL 60000 // milliseconds
-#define DEBUG 0 // 0 or 1
+#define DEBUG 1 // 0 or 1
 
 #include "secrets.h"
 char wifiSSID[] = WIFI_SSID;
@@ -36,7 +36,10 @@ void setup() {
   connectToWifi(wifiSSID, wifiPass);
   Serial.println();
 
-  if (DEBUG != 1) Serial.end();
+  if (DEBUG != 1) {
+    Serial.println("Suppressing debug output from here on");
+    Serial.end();
+  }
 
   adjustedMinBrightness = MIN_BRIGHTNESS + ZERO_OFFSET;
 }
@@ -84,7 +87,8 @@ void loop() {
     currentLightLevel = daytimeLightLevel - (lightLevelDifference * howFarFromLightToDark);
   } else {
     Serial.println("Nighttime");
-    currentLightLevel = nighttimeLightLevel;
+    // Todo: Make this more elegant, more floats coming I think...
+    currentLightLevel = nighttimeLightLevel - 0.88;
   }
   Serial.println();
   
