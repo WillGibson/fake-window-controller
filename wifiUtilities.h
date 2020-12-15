@@ -4,7 +4,8 @@
 void checkWifiStatus() {
   if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
-    while (true); // don't continue
+    Serial.println("Restarting");
+    restart();
   }
 }
 
@@ -73,18 +74,22 @@ void connectToWifi(char ssid[], char pass[]) {
   Serial.println();
   Serial.print("Attempting to connect to WPA SSID: ");
   Serial.print(ssid);
-  int timeout = 0;
-  while (status != WL_CONNECTED && timeout < 100) {
+  int attepmts = 0;
+  while (status != WL_CONNECTED && attepmts < 10) {
+    attepmts++;
     Serial.print(".");
     status = WiFi.begin(ssid, pass);
-    delay(100);
+    if (status != WL_CONNECTED) {
+      delay(30000);
+    }
   }
   Serial.println();
   Serial.println();
   
   if (status != WL_CONNECTED) {
     Serial.println("Could not connect to the WiFi network");
-    Serial.println("Effectively exiting"); while (true);
+    Serial.println("Restarting");
+    restart();
   }
   
   Serial.println("You're connected to the network");
