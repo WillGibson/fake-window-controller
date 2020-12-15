@@ -1,3 +1,4 @@
+#include "restart.h"
 #include "getWeather.h"
 #include "wifiUtilities.h"
 
@@ -57,7 +58,7 @@ void loop() {
   long sunsetEndTime = sunset + (SUNLIGHT_TRANSITION_TIME / 2);
   long cloudiness = long(weather["cloudiness"]);
 
-  int daytimeLightLevel = MAX_BRIGHTNESS - (cloudiness / 3);
+  int daytimeLightLevel = MAX_BRIGHTNESS - ((cloudiness - 50) / 3);
   int nighttimeLightLevel = adjustedMinBrightness;
   int lightLevelDifference = daytimeLightLevel - nighttimeLightLevel;
   Serial.println((String)"now: " + now);
