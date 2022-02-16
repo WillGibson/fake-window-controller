@@ -1,3 +1,4 @@
+#include "restart.h"
 #include "getWeather.h"
 #include "wifiUtilities.h"
 

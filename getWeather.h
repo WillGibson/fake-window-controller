@@ -21,6 +21,8 @@ StaticJsonDocument<200> getWeather(String apiKey, String location) {
   } else {
     Serial.print("Could not ping ");
     Serial.println(host);
+    Serial.println("Restarting in case it's an issue with the WiFi");
+    restart();
   }
 
 
